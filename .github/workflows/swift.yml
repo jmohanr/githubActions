@@ -1,0 +1,59 @@
+name: iOS CI
+
+on:
+  push:
+    branches:
+      - main
+  pull_request:
+    branches:
+      - main
+
+jobs:
+  build:
+    runs-on: macos-latest
+
+    steps:
+    # Checkout the code from the repository
+    - name: Checkout code
+      uses: actions/checkout@v3
+
+    # Set up Xcode environment
+    - name: Set up Xcode
+      run: sudo xcode-select -s /Applications/Xcode_14.3.app
+
+    # Install CocoaPods if your project uses it
+    - name: Install CocoaPods
+      run: |
+        sudo gem install cocoapods
+        pod install
+      working-directory: ./YourProjectName
+
+    # Install dependencies if using Swift Package Manager
+    - name: Resolve SPM dependencies
+      run: swift package resolve
+
+    # Build the app
+    - name: Build app
+      run: xcodebuild -workspace YourApp.xcworkspace -scheme YourAppScheme -sdk iphoneos -configuration Release build
+
+    # Run tests (optional)
+    - name: Run tests
+      run: xcodebuild test -workspace YourApp.xcworkspace -scheme YourAppScheme -destination 'platform=iOS Simulator,name=iPhone 14 Pro'
+
+    # Archive the app (optional)
+    - name: Archive app
+      run: |
+        xcodebuild archive \
+          -workspace YourApp.xcworkspace \
+          -scheme YourAppScheme \
+          -sdk iphoneos \
+          -configuration Release \
+          -archivePath ${{ github.workspace }}/YourApp.xcarchive
+
+    # Optionally upload artifacts (build logs, test reports)
+    - name: Upload Xcode logs
+      uses: actions/upload-artifact@v3
+      with:
+        name: xcode-logs
+        path: ~/Library/Developer/Xcode/DerivedData
+
