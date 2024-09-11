@@ -30,11 +30,11 @@ jobs:
 
     # Build the app
     - name: Build app
-      run: xcodebuild -workspace YourApp.xcworkspace -scheme WorkFlowTest -sdk iphoneos -configuration Release build
+      run: xcodebuild -workspace WorkFlowTest.xcworkspace -scheme WorkFlowTest -sdk iphoneos -configuration Release build
 
     # Run tests (optional)
     - name: Run tests
-      run: xcodebuild test -workspace YourApp.xcworkspace -scheme WorkFlowTest -destination 'platform=iOS Simulator,name=iPhone 14 Pro'
+      run: xcodebuild test -workspace WorkFlowTest.xcworkspace -scheme WorkFlowTest -destination 'platform=iOS Simulator,name=iPhone 14 Pro'
 
     # Archive the app (optional)
     - name: Archive app
