@@ -30,7 +30,7 @@ jobs:
 
     # Build the app
     - name: Build app
-      run: xcodebuild build -workspace WorkFlowTest.xcworkspace -scheme WorkFlowTest clean build -sdk iphoneos CODE_SIGNING_ALLOWED=No
+      run: swift build
 
     # Run tests (optional)
     - name: Run tests
