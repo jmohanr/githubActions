@@ -19,7 +19,7 @@ jobs:
 
     # Set up Xcode environment
     - name: Set up Xcode
-      run: sudo xcode-select -s /Applications/Xcode_14.3.app
+      run: sudo xcode-select -s /Applications/Xcode_15.4.app
 
     # Install CocoaPods if your project uses it
     - name: Install CocoaPods
@@ -30,7 +30,7 @@ jobs:
 
     # Build the app
     - name: Build app
-      run: xcodebuild -workspace WorkFlowTest.xcworkspace -scheme WorkFlowTest -sdk iphoneos -configuration Release build
+      run: xcodebuild build -workspace WorkFlowTest.xcworkspace -scheme WorkFlowTest clean build -sdk iphoneos CODE_SIGNING_ALLOWED=No
 
     # Run tests (optional)
     - name: Run tests
