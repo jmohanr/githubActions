@@ -13,9 +13,11 @@
 		A9FE07122C90886A002556CC /* Base in Resources */ = {isa = PBXBuildFile; fileRef = A9FE07112C90886A002556CC /* Base */; };
 		A9FE07142C90886D002556CC /* Assets.xcassets in Resources */ = {isa = PBXBuildFile; fileRef = A9FE07132C90886D002556CC /* Assets.xcassets */; };
 		A9FE07172C90886D002556CC /* Base in Resources */ = {isa = PBXBuildFile; fileRef = A9FE07162C90886D002556CC /* Base */; };
+		D5BAC55A53F588B9CB218AB1 /* Pods_WorkFlowTest.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = FF6C3B279F84813B2D904AE8 /* Pods_WorkFlowTest.framework */; };
 /* End PBXBuildFile section */
 
 /* Begin PBXFileReference section */
+		953CB8C5CE802C1742E3E080 /* Pods-WorkFlowTest.release.xcconfig */ = {isa = PBXFileReference; includeInIndex = 1; lastKnownFileType = text.xcconfig; name = "Pods-WorkFlowTest.release.xcconfig"; path = "Target Support Files/Pods-WorkFlowTest/Pods-WorkFlowTest.release.xcconfig"; sourceTree = "<group>"; };
 		A9FE07072C90886A002556CC /* WorkFlowTest.app */ = {isa = PBXFileReference; explicitFileType = wrapper.application; includeInIndex = 0; path = WorkFlowTest.app; sourceTree = BUILT_PRODUCTS_DIR; };
 		A9FE070A2C90886A002556CC /* AppDelegate.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = AppDelegate.swift; sourceTree = "<group>"; };
 		A9FE070C2C90886A002556CC /* SceneDelegate.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = SceneDelegate.swift; sourceTree = "<group>"; };
@@ -24,6 +26,8 @@
 		A9FE07132C90886D002556CC /* Assets.xcassets */ = {isa = PBXFileReference; lastKnownFileType = folder.assetcatalog; path = Assets.xcassets; sourceTree = "<group>"; };
 		A9FE07162C90886D002556CC /* Base */ = {isa = PBXFileReference; lastKnownFileType = file.storyboard; name = Base; path = Base.lproj/LaunchScreen.storyboard; sourceTree = "<group>"; };
 		A9FE07182C90886D002556CC /* Info.plist */ = {isa = PBXFileReference; lastKnownFileType = text.plist.xml; path = Info.plist; sourceTree = "<group>"; };
+		C30055CD29D6E2DE03CD7B5B /* Pods-WorkFlowTest.debug.xcconfig */ = {isa = PBXFileReference; includeInIndex = 1; lastKnownFileType = text.xcconfig; name = "Pods-WorkFlowTest.debug.xcconfig"; path = "Target Support Files/Pods-WorkFlowTest/Pods-WorkFlowTest.debug.xcconfig"; sourceTree = "<group>"; };
+		FF6C3B279F84813B2D904AE8 /* Pods_WorkFlowTest.framework */ = {isa = PBXFileReference; explicitFileType = wrapper.framework; includeInIndex = 0; path = Pods_WorkFlowTest.framework; sourceTree = BUILT_PRODUCTS_DIR; };
 /* End PBXFileReference section */
 
 /* Begin PBXFrameworksBuildPhase section */
@@ -31,6 +35,7 @@
 			isa = PBXFrameworksBuildPhase;
 			buildActionMask = 2147483647;
 			files = (
+				D5BAC55A53F588B9CB218AB1 /* Pods_WorkFlowTest.framework in Frameworks */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};
@@ -42,6 +47,8 @@
 			children = (
 				A9FE07092C90886A002556CC /* WorkFlowTest */,
 				A9FE07082C90886A002556CC /* Products */,
+				EC86DBA2DA1CB792B4185830 /* Pods */,
+				B37422A774E7A04C0491BE08 /* Frameworks */,
 			);
 			sourceTree = "<group>";
 		};
@@ -67,6 +74,24 @@
 			path = WorkFlowTest;
 			sourceTree = "<group>";
 		};
+		B37422A774E7A04C0491BE08 /* Frameworks */ = {
+			isa = PBXGroup;
+			children = (
+				FF6C3B279F84813B2D904AE8 /* Pods_WorkFlowTest.framework */,
+			);
+			name = Frameworks;
+			sourceTree = "<group>";
+		};
+		EC86DBA2DA1CB792B4185830 /* Pods */ = {
+			isa = PBXGroup;
+			children = (
+				C30055CD29D6E2DE03CD7B5B /* Pods-WorkFlowTest.debug.xcconfig */,
+				953CB8C5CE802C1742E3E080 /* Pods-WorkFlowTest.release.xcconfig */,
+			);
+			name = Pods;
+			path = Pods;
+			sourceTree = "<group>";
+		};
 /* End PBXGroup section */
 
 /* Begin PBXNativeTarget section */
@@ -74,6 +99,7 @@
 			isa = PBXNativeTarget;
 			buildConfigurationList = A9FE071B2C90886D002556CC /* Build configuration list for PBXNativeTarget "WorkFlowTest" */;
 			buildPhases = (
+				66A1DE47A219ED5E802C6C60 /* [CP] Check Pods Manifest.lock */,
 				A9FE07032C90886A002556CC /* Sources */,
 				A9FE07042C90886A002556CC /* Frameworks */,
 				A9FE07052C90886A002556CC /* Resources */,
@@ -132,6 +158,31 @@
 			runOnlyForDeploymentPostprocessing = 0;
 		};
 /* End PBXResourcesBuildPhase section */
+
+/* Begin PBXShellScriptBuildPhase section */
+		66A1DE47A219ED5E802C6C60 /* [CP] Check Pods Manifest.lock */ = {
+			isa = PBXShellScriptBuildPhase;
+			buildActionMask = 2147483647;
+			files = (
+			);
+			inputFileListPaths = (
+			);
+			inputPaths = (
+				"${PODS_PODFILE_DIR_PATH}/Podfile.lock",
+				"${PODS_ROOT}/Manifest.lock",
+			);
+			name = "[CP] Check Pods Manifest.lock";
+			outputFileListPaths = (
+			);
+			outputPaths = (
+				"$(DERIVED_FILE_DIR)/Pods-WorkFlowTest-checkManifestLockResult.txt",
+			);
+			runOnlyForDeploymentPostprocessing = 0;
+			shellPath = /bin/sh;
+			shellScript = "diff \"${PODS_PODFILE_DIR_PATH}/Podfile.lock\" \"${PODS_ROOT}/Manifest.lock\" > /dev/null\nif [ $? != 0 ] ; then\n    # print error to STDERR\n    echo \"error: The sandbox is not in sync with the Podfile.lock. Run 'pod install' or update your CocoaPods installation.\" >&2\n    exit 1\nfi\n# This output is used by Xcode 'outputs' to avoid re-running this script phase.\necho \"SUCCESS\" > \"${SCRIPT_OUTPUT_FILE_0}\"\n";
+			showEnvVarsInLog = 0;
+		};
+/* End PBXShellScriptBuildPhase section */
 
 /* Begin PBXSourcesBuildPhase section */
 		A9FE07032C90886A002556CC /* Sources */ = {
@@ -287,11 +338,14 @@
 		};
 		A9FE071C2C90886D002556CC /* Debug */ = {
 			isa = XCBuildConfiguration;
+			baseConfigurationReference = C30055CD29D6E2DE03CD7B5B /* Pods-WorkFlowTest.debug.xcconfig */;
 			buildSettings = {
 				ASSETCATALOG_COMPILER_APPICON_NAME = AppIcon;
 				ASSETCATALOG_COMPILER_GLOBAL_ACCENT_COLOR_NAME = AccentColor;
+				CODE_SIGN_IDENTITY = "Apple Development";
 				CODE_SIGN_STYLE = Automatic;
 				CURRENT_PROJECT_VERSION = 1;
+				DEVELOPMENT_TEAM = 7RF3MH4348;
 				GENERATE_INFOPLIST_FILE = YES;
 				INFOPLIST_FILE = WorkFlowTest/Info.plist;
 				INFOPLIST_KEY_UIApplicationSupportsIndirectInputEvents = YES;
@@ -306,6 +360,7 @@
 				MARKETING_VERSION = 1.0;
 				PRODUCT_BUNDLE_IDENTIFIER = com.jagan.com.WorkFlowTest;
 				PRODUCT_NAME = "$(TARGET_NAME)";
+				PROVISIONING_PROFILE_SPECIFIER = "";
 				SWIFT_EMIT_LOC_STRINGS = YES;
 				SWIFT_VERSION = 5.0;
 				TARGETED_DEVICE_FAMILY = "1,2";
@@ -314,11 +369,13 @@
 		};
 		A9FE071D2C90886D002556CC /* Release */ = {
 			isa = XCBuildConfiguration;
+			baseConfigurationReference = 953CB8C5CE802C1742E3E080 /* Pods-WorkFlowTest.release.xcconfig */;
 			buildSettings = {
 				ASSETCATALOG_COMPILER_APPICON_NAME = AppIcon;
 				ASSETCATALOG_COMPILER_GLOBAL_ACCENT_COLOR_NAME = AccentColor;
-				CODE_SIGN_STYLE = Automatic;
+				CODE_SIGN_STYLE = Manual;
 				CURRENT_PROJECT_VERSION = 1;
+				DEVELOPMENT_TEAM = "";
 				GENERATE_INFOPLIST_FILE = YES;
 				INFOPLIST_FILE = WorkFlowTest/Info.plist;
 				INFOPLIST_KEY_UIApplicationSupportsIndirectInputEvents = YES;
@@ -333,6 +390,7 @@
 				MARKETING_VERSION = 1.0;
 				PRODUCT_BUNDLE_IDENTIFIER = com.jagan.com.WorkFlowTest;
 				PRODUCT_NAME = "$(TARGET_NAME)";
+				PROVISIONING_PROFILE_SPECIFIER = "";
 				SWIFT_EMIT_LOC_STRINGS = YES;
 				SWIFT_VERSION = 5.0;
 				TARGETED_DEVICE_FAMILY = "1,2";
