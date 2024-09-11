@@ -28,10 +28,6 @@ jobs:
         pod install
       working-directory: ./WorkFlowTest
 
-    # Install dependencies if using Swift Package Manager
-    - name: Resolve SPM dependencies
-      run: swift package resolve
-
     # Build the app
     - name: Build app
       run: xcodebuild -workspace YourApp.xcworkspace -scheme WorkFlowTest -sdk iphoneos -configuration Release build
