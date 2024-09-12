@@ -33,26 +33,35 @@ jobs:
       run: |
         mkdir -p ${{ github.workspace }}/ios_build
         echo "CocoaPods installation successful on $(date)" > ${{ github.workspace }}/ios_build/build_info.txt
-        echo "Folder ios_build and build_info.txt created."
       shell: bash
 
     # Log root directory contents for debugging purposes
     - name: Log root directory contents
       run: ls -al ${{ github.workspace }}
 
-    # Build the app and ensure the build is successful
+    # Build the app and set DerivedData to a custom path inside the GitHub workspace
     - name: Build app
       run: | 
         cd WorkFlowTest
-        xcodebuild clean build -workspace WorkFlowTest.xcworkspace -scheme WorkFlowTest -sdk iphoneos CODE_SIGNING_ALLOWED=No
+        xcodebuild clean build \
+          -workspace WorkFlowTest.xcworkspace \
+          -scheme WorkFlowTest \
+          -sdk iphoneos \
+          -derivedDataPath ${{ github.workspace }}/DerivedData \
+          CODE_SIGNING_ALLOWED=No
       continue-on-error: false
       shell: bash
 
-    # Run tests (optional)
+    # Run tests and save DerivedData to a custom path
     - name: Run tests
-      run: xcodebuild test -workspace WorkFlowTest.xcworkspace -scheme WorkFlowTest -destination 'platform=iOS Simulator,name=iPhone 14 Pro'
+      run: |
+        xcodebuild test \
+          -workspace WorkFlowTest.xcworkspace \
+          -scheme WorkFlowTest \
+          -destination 'platform=iOS Simulator,name=iPhone 14 Pro' \
+          -derivedDataPath ${{ github.workspace }}/DerivedData
 
-    # Archive the app (optional)
+    # Archive the app and use the custom DerivedData path
     - name: Archive app
       run: |
         xcodebuild archive \
@@ -60,7 +69,15 @@ jobs:
           -scheme WorkFlowTest \
           -sdk iphoneos \
           -configuration Release \
-          -archivePath ${{ github.workspace }}/WorkFlowTest.xcarchive
+          -archivePath ${{ github.workspace }}/WorkFlowTest.xcarchive \
+          -derivedDataPath ${{ github.workspace }}/DerivedData
+
+    # Upload the DerivedData folder as an artifact
+    - name: Upload DerivedData folder
+      uses: actions/upload-artifact@v3
+      with:
+        name: derived-data
+        path: ${{ github.workspace }}/DerivedData
 
     # Upload the created folder as an artifact
     - name: Upload ios_build folder
@@ -74,4 +91,4 @@ jobs:
       uses: actions/upload-artifact@v3
       with:
         name: xcode-logs
-        path: ~/Library/Developer/Xcode/DerivedData
+        path: ${{ github.workspace }}/DerivedData/Logs
