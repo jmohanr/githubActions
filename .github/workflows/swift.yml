@@ -36,26 +36,26 @@ jobs:
       continue-on-error: false
       shell: bash
 
-    # Log working directory for debugging purposes
+    # Log current directory for debugging purposes
     - name: Log current directory
       run: pwd
 
     # Log directory contents for debugging purposes
-    - name: Log directory contents
-      run: ls -al WorkFlowTest
+    - name: Log root directory contents
+      run: ls -al
 
-    # Create a folder named 'ios_build' in WorkFlowTest and save a text file after successful build
-    - name: Create ios_build folder and save file
+    # Create a folder named 'ios_build' in the project root and save a text file after successful build
+    - name: Create ios_build folder in root and save file
       if: success()
       run: |
-        mkdir -p WorkFlowTest/ios_build
-        echo "Build successful on $(date)" > WorkFlowTest/ios_build/build_info.txt
+        mkdir -p ${{ github.workspace }}/ios_build
+        echo "Build successful on $(date)" > ${{ github.workspace }}/ios_build/build_info.txt
         echo "Folder ios_build and build_info.txt created."
       shell: bash
 
     # Log directory contents after creating folder for debugging
-    - name: Log directory contents after folder creation
-      run: ls -al WorkFlowTest/ios_build
+    - name: Log ios_build folder contents
+      run: ls -al ${{ github.workspace }}/ios_build
 
     # Run tests (optional)
     - name: Run tests
@@ -72,11 +72,11 @@ jobs:
           -archivePath ${{ github.workspace }}/WorkFlowTest.xcarchive
 
     # Upload the created folder as an artifact
-    - name: Upload build folder
+    - name: Upload ios_build folder
       uses: actions/upload-artifact@v3
       with:
         name: build-folder
-        path: WorkFlowTest/ios_build
+        path: ${{ github.workspace }}/ios_build
 
     # Optionally upload Xcode logs
     - name: Upload Xcode logs
