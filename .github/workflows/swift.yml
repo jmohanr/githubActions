@@ -28,20 +28,34 @@ jobs:
         pod install
       working-directory: ./WorkFlowTest
 
-    # Build the app
+    # Build the app and ensure the build is successful
     - name: Build app
       run: | 
         cd WorkFlowTest
         xcodebuild clean build -workspace WorkFlowTest.xcworkspace -scheme WorkFlowTest -sdk iphoneos CODE_SIGNING_ALLOWED=No
-        
-    # Create a folder named 'ios_build' and save a text file after successful build
+      continue-on-error: false
+      shell: bash
+
+    # Log working directory for debugging purposes
+    - name: Log current directory
+      run: pwd
+
+    # Log directory contents for debugging purposes
+    - name: Log directory contents
+      run: ls -al WorkFlowTest
+
+    # Create a folder named 'ios_build' in WorkFlowTest and save a text file after successful build
     - name: Create ios_build folder and save file
       if: success()
       run: |
-        cd WorkFlowTest
-        mkdir -p ios_build
-        echo "Build successful on $(date)" > ios_build/build_info.txt
+        mkdir -p WorkFlowTest/ios_build
+        echo "Build successful on $(date)" > WorkFlowTest/ios_build/build_info.txt
         echo "Folder ios_build and build_info.txt created."
+      shell: bash
+
+    # Log directory contents after creating folder for debugging
+    - name: Log directory contents after folder creation
+      run: ls -al WorkFlowTest/ios_build
 
     # Run tests (optional)
     - name: Run tests
