@@ -28,17 +28,6 @@ jobs:
         pod install
       working-directory: ./WorkFlowTest
 
-    # Create a folder named 'ios_build' in the project root and save a text file
-    - name: Create ios_build folder in root and save file
-      run: |
-        mkdir -p /WorkFlowTest/ios_build
-        echo "CocoaPods installation successful on $(date)" > /WorkFlowTest/ios_build/build_info.txt
-      shell: bash
-
-    # Log root directory contents for debugging purposes
-    - name: Log root directory contents
-      run: ls -al ${{ github.workspace }}
-
     # Build the app and set DerivedData to a custom path inside the GitHub workspace
     - name: Build app
       run: | 
