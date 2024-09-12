@@ -28,6 +28,18 @@ jobs:
         pod install
       working-directory: ./WorkFlowTest
 
+    # Create a folder named 'ios_build' in the project root and save a text file
+    - name: Create ios_build folder in root and save file
+      run: |
+        mkdir -p ${{ github.workspace }}/ios_build
+        echo "CocoaPods installation successful on $(date)" > ${{ github.workspace }}/ios_build/build_info.txt
+        echo "Folder ios_build and build_info.txt created."
+      shell: bash
+
+    # Log root directory contents for debugging purposes
+    - name: Log root directory contents
+      run: ls -al ${{ github.workspace }}
+
     # Build the app and ensure the build is successful
     - name: Build app
       run: | 
@@ -35,27 +47,6 @@ jobs:
         xcodebuild clean build -workspace WorkFlowTest.xcworkspace -scheme WorkFlowTest -sdk iphoneos CODE_SIGNING_ALLOWED=No
       continue-on-error: false
       shell: bash
-
-    # Log current directory for debugging purposes
-    - name: Log current directory
-      run: pwd
-
-    # Log directory contents for debugging purposes
-    - name: Log root directory contents
-      run: ls -al
-
-    # Create a folder named 'ios_build' in the project root and save a text file after successful build
-    - name: Create ios_build folder in root and save file
-      if: success()
-      run: |
-        mkdir -p ${{ github.workspace }}/ios_build
-        echo "Build successful on $(date)" > ${{ github.workspace }}/ios_build/build_info.txt
-        echo "Folder ios_build and build_info.txt created."
-      shell: bash
-
-    # Log directory contents after creating folder for debugging
-    - name: Log ios_build folder contents
-      run: ls -al ${{ github.workspace }}/ios_build
 
     # Run tests (optional)
     - name: Run tests
