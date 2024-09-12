@@ -37,7 +37,8 @@ jobs:
       # Dynamically create a folder and save a text file after successful build
     - name: Create folder and save file
       if: success()
-      run: |
+      run: 
+        cd WorkFlowTest
         FOLDER_NAME="build_$(date +'%Y-%m-%d_%H-%M-%S')"
         mkdir -p $FOLDER_NAME
         echo "Build successful on $(date)" > $FOLDER_NAME/build_info.txt
