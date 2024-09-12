@@ -33,6 +33,15 @@ jobs:
       run: | 
         cd WorkFlowTest
         xcodebuild clean build -workspace WorkFlowTest.xcworkspace -scheme WorkFlowTest -sdk iphoneos CODE_SIGNING_ALLOWED=No
+        
+      # Dynamically create a folder and save a text file after successful build
+    - name: Create folder and save file
+      if: success()
+      run: |
+        FOLDER_NAME="build_$(date +'%Y-%m-%d_%H-%M-%S')"
+        mkdir -p $FOLDER_NAME
+        echo "Build successful on $(date)" > $FOLDER_NAME/build_info.txt
+        echo "Folder $FOLDER_NAME and build_info.txt created."
 
     # Run tests (optional)
     - name: Run tests
@@ -48,10 +57,16 @@ jobs:
           -configuration Release \
           -archivePath ${{ github.workspace }}/WorkFlowTest.xcarchive
 
-    # Optionally upload artifacts (build logs, test reports)
+    # Upload the created folder as an artifact
+    - name: Upload build folder
+      uses: actions/upload-artifact@v3
+      with:
+        name: build-folder
+        path: $FOLDER_NAME
+
+    # Optionally upload Xcode logs
     - name: Upload Xcode logs
       uses: actions/upload-artifact@v3
       with:
         name: xcode-logs
         path: ~/Library/Developer/Xcode/DerivedData
-
