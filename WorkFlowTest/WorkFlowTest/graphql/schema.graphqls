@@ -1,0 +1,366 @@
+directive @authorize(accessChecks: [AccessCheck]) on FIELD_DEFINITION
+
+"""
+POST /api/v1/graphql
+
+For use by ADMIN users only; requires an appToken
+
+For STUDENT-facing GraphQL, use /v2/graphql with history and performance schemas.
+"""
+type Sequence {
+  """For use by ADMIN users only; requires an appToken"""
+  tenant_id: String
+  id: String
+  enrollment_id: String
+  title: String
+  started_at: String
+  completed_at: String
+  status: String
+  recipe_name: String
+  recipe_type: String
+}
+
+"""Custom scalar type of format [enrollment_id, recipe_name]"""
+scalar EnrollmentIdRecipeNameTuple
+
+type Query {
+  sequences(
+    """For use by ADMIN users only; requires an appToken"""
+    enrollment_ids: [String]!
+    recipe_names: [String]
+    recipe_types: [String]
+    status: String
+    limit: Int
+  ): [Sequence]
+  sessionSequences(
+    """
+    EnrollmentIdRecipeNameTuple should be of the format [enrollment_id, recipe_name]
+    """
+    enrollmentIdRecipeNameTuples: [EnrollmentIdRecipeNameTuple]!
+    limit: Int
+  ): [Sequence]
+  history(
+    """
+    Either a single productGroupId OR an array of enrollmentIds MUST be provided.
+    """
+    productGroupId: ID
+
+    """
+    Either a single productGroupId OR an array of enrollmentIds MUST be provided.
+    """
+    enrollmentIds: [String]
+    recipeNames: [String]
+    recipeTypes: [String]
+    excludedRecipeTypes: [String]
+
+    """
+    Possible status values: IN_PROGRESS, COMPLETED, PENDING_REVIEW (deprecated).
+    """
+    status: Status
+
+    """Useful for limiting resultset, e.g., fetch the most recent 3 tests."""
+    limit: Int
+  ): [History]
+  performanceV2(
+    """
+    Either a single productGroupId OR an array of enrollmentIds MUST be provided.
+    """
+    productGroupId: ID
+
+    """
+    Either a single productGroupId OR an array of enrollmentIds MUST be provided.
+    """
+    enrollmentIds: [String]
+
+    """
+    An array of topic tags MUST be provided when requesting Difficulty Stats.
+    """
+    tags: [String]
+    recipeTypes: [String]
+    limit: Int
+
+    """
+    Used by tagBreakdown to fetch selection recipes to pass to ItemSelection
+    """
+    recipeNames: [String]
+
+    """
+    For tagBreakdown, difficulty tags are required if difficulty field is requested
+    """
+    difficultyTags: [String]
+    topLevelTopics: [String]
+
+    """
+    Dev purposes: used to compare performance between DB and ES; defaults to false (use ES)
+    """
+    useDB: Boolean
+  ): PerformanceV2
+  performance(
+    """
+    Either a single productGroupId OR an array of enrollmentIds MUST be provided.
+    """
+    productGroupId: ID
+
+    """
+    Either a single productGroupId OR an array of enrollmentIds MUST be provided.
+    """
+    enrollmentIds: [String]
+
+    """
+    An array of topic tags MUST be provided when requesting Difficulty Stats.
+    """
+    tags: [String]
+    recipeTypes: [String]
+    limit: Int
+
+    """
+    Used by tagBreakdown to fetch selection recipes to pass to ItemSelection
+    """
+    recipeNames: [String]
+
+    """
+    For tagBreakdown, difficulty tags are required if difficulty field is requested
+    """
+    difficultyTags: [String]
+
+    """
+    Dev purposes: used to compare performance between DB and ES; defaults to false (use ES)
+    """
+    useDB: Boolean
+  ): Performance
+}
+
+enum AccessCheck {
+  enrollmentCheck
+  appIdCheck
+}
+
+"""
+POST /api/v2/graphql
+
+Fetch quiz/sequence history by either a productGroupId or an array of enrollmentIds.
+"""
+type History {
+  id: String
+  enrollmentId: String
+  title: String
+  status: String
+  recipeName: String
+  recipeType: String
+  isScoreBasedReporting: Boolean
+  isTimerMode: Boolean
+  isTutorMode: Boolean
+  isComplete: Boolean
+
+  """
+  isReviewed (and countPendingReview) is applicable only to completed sequences
+  """
+  isReviewed: Boolean
+  startDate: String
+  completeDate: String
+
+  """
+  number of questions in sequence;
+  this may be differ between in_progress and completed sequences, especially for adaptive
+  qbanks or those in_progress qbanks with passage-based questions
+  """
+  countQuestions: Int
+
+  """
+  countPendingReview (and isReviewed) is applicable only to completed sequences
+  """
+  countPendingReview: Int
+
+  """Non-points-based scoring fields"""
+  score: Score
+
+  """
+  Points-based scoring fields, will default to score fields (worth 1 point each) if no values fetched
+  """
+  scoreByPoints: ScoreByPoints
+
+  """
+  TBD: this may be changed to return topics/subtopics instead of tags
+  
+  Leaving tags for backwards-compatibility
+  """
+  tags: [String]
+  topics: [String]
+
+  """
+  TBD: The Taxonomy structure is pulled from QBank API for USMLE which won't work for CFA
+  """
+  taxonomy: Taxonomy
+}
+
+type Taxonomy {
+  tag_0: [String]
+  tag_1: [String]
+  tag_2: [String]
+}
+
+type Score {
+  """total = count of scorable items"""
+  total: Int
+  percentageCorrect: Float
+  scaledScore: Int
+  mastery: Boolean
+  correct: Int
+  incorrect: Int
+  unseen: Int
+  omitted: Int
+}
+
+type ScoreByPoints {
+  """Score (points)-based reporting; scoreTotal = points earned"""
+  scoreTotal: Int
+
+  """Score (points)-based reporting; maxScore = points possible"""
+  maxScore: Int
+
+  """
+  Score (points)-based reporting; percentageCorrectByScore = (scoreTotal / maxScore) * 100
+  """
+  percentageCorrectByScore: Float
+}
+
+enum Status {
+  IN_PROGRESS
+  COMPLETED
+  PENDING_REVIEW
+}
+
+"""
+POST /api/v2/graphql
+
+Fetch performance data by either a productGroupId or an array of enrollmentIds.
+
+abilityStats and yieldScales are relevant for adaptive tests.
+"""
+type PerformanceV2 {
+  """Adaptive tests have ability stats."""
+  abilityStats: [AbilityStats]
+
+  """Adaptive tests have yield scales."""
+  yieldScales: [YieldScales]
+
+  """Legacy Overall Performance DifficultyStats."""
+  difficultyStats: [DifficultyStats]
+
+  """Performance breakdown stats grouped by tag + recipeType + difficulty."""
+  performanceBreakdown: PerformanceBreakdown
+}
+
+type Performance {
+  """Adaptive tests have ability stats."""
+  abilityStats: [AbilityStats]
+
+  """Adaptive tests have yield scales."""
+  yieldScales: [YieldScales]
+
+  """Legacy Overall Performance DifficultyStats."""
+  difficultyStats: [DifficultyStats]
+
+  """Performance breakdown stats grouped by tag + recipeType + difficulty."""
+  tagBreakdown: [TagBreakdown]
+}
+
+type PerformanceBreakdown {
+  """Performance breakdown stats grouped by recipeType"""
+  recipeTypeBreakdown: [RecipeTypeBreakdown]
+
+  """Performance breakdown stats grouped by tag + recipeType + difficulty."""
+  tagBreakdown: [TagBreakdown]
+}
+
+type RecipeTypeBreakdown {
+  correct: Int
+  incorrect: Int
+  available: Int
+  recipeType: String
+  averageTimeSpent: Float
+}
+
+type AbilityStats {
+  tagName: String
+  abilityStat: AbilityStat
+}
+
+type AbilityStat {
+  min: Int
+  max: Int
+  theta: Float
+  error: Float
+  confidenceInterval: ConfidenceInterval
+  numberOfQuestions: Int
+}
+
+type ConfidenceInterval {
+  min: Float
+  max: Float
+}
+
+type YieldScales {
+  name: String
+  strands: [Strand]
+}
+
+type Strand {
+  name: String
+  proportion: Float
+  coefficient: Float
+}
+
+type DifficultyStats {
+  tagName: String
+  difficultyStat: [DifficultyStat]
+}
+
+type DifficultyStat {
+  difficulty: String
+
+  """score = percentage correct = (correct / total) * 100"""
+  score: Float
+  correct: Int
+  incorrect: Int
+  total: Int
+
+  """Score (points)-based reporting; scoreTotal = points earned"""
+  scoreTotal: Int
+
+  """Score (points)-based reporting; maxScore = points possible"""
+  maxScore: Int
+
+  """
+  Score (points)-based reporting; percentageCorrectByScore = (scoreTotal / maxScore) * 100
+  """
+  percentageCorrectByScore: Float
+}
+
+type TagBreakdown {
+  tagName: String
+  recipeType: String
+
+  """
+  Optional parameter; don't request it if you don't need it, to keep processing time and response sizes smaller
+  """
+  difficulty: String
+  available: Int
+  correct: Int
+  incorrect: Int
+  timeSpent: Int
+
+  """Score (points)-based reporting; scoreTotal = points earned"""
+  scoreTotal: Int
+
+  """Score (points)-based reporting; maxScore = points possible"""
+  maxScore: Int
+
+  """
+  Score (points)-based reporting; percentageCorrectByScore = (scoreTotal / maxScore) * 100
+  """
+  percentageCorrectByScore: Float
+
+  """Debugging purposes"""
+  itemNames: [String]
+}

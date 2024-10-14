@@ -1,0 +1,30 @@
+
+query GetQuizHistory($productGroupId: ID, $recipeTypes: [String], $status: Status) {
+          history(productGroupId: $productGroupId, recipeTypes: $recipeTypes, status: $status) {
+            __typename
+            id
+            enrollmentId
+            title
+            recipeType
+            isTimerMode
+            isTutorMode
+            isReviewed
+            tags
+            countQuestions
+            completeDate
+            startDate
+            score {
+              __typename
+              total
+              percentageCorrect
+              scaledScore
+              mastery
+              correct
+              incorrect
+              unseen
+              omitted
+            }
+            isComplete
+            recipeName
+          }
+        }
