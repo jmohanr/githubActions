@@ -19,41 +19,79 @@ jobs:
 
     # Set up Xcode environment
     - name: Set up Xcode
-      run: sudo xcode-select -s /Applications/Xcode_14.3.app
+      run: sudo xcode-select -s /Applications/Xcode_15.4.app
 
     # Install CocoaPods if your project uses it
     - name: Install CocoaPods
       run: |
         sudo gem install cocoapods
         pod install
-      working-directory: ./YourProjectName
+      working-directory: ./WorkFlowTest
 
-    # Install dependencies if using Swift Package Manager
-    - name: Resolve SPM dependencies
-      run: swift package resolve
+    # Build the app and set DerivedData to a custom path inside the GitHub workspace
+    - name: Build app and capture logs
+      id: build
+      run: | 
+        cd WorkFlowTest
+        mkdir -p ${{ github.workspace }}/build_logs
+        xcodebuild clean build \
+          -workspace WorkFlowTest.xcworkspace \
+          -scheme WorkFlowTest \
+          -sdk iphoneos \
+          -derivedDataPath ${{ github.workspace }}/DerivedData \
+          CODE_SIGNING_ALLOWED=No | tee ${{ github.workspace }}/build_logs/build_logs.txt
+      continue-on-error: false
+      shell: bash
 
-    # Build the app
-    - name: Build app
-      run: xcodebuild -workspace YourApp.xcworkspace -scheme YourAppScheme -sdk iphoneos -configuration Release build
-
-    # Run tests (optional)
+    # Run tests only if the build was successful
     - name: Run tests
-      run: xcodebuild test -workspace YourApp.xcworkspace -scheme YourAppScheme -destination 'platform=iOS Simulator,name=iPhone 14 Pro'
-
-    # Archive the app (optional)
-    - name: Archive app
+      if: success()
       run: |
+        mkdir -p ${{ github.workspace }}/test_logs
+        xcodebuild test \
+          -workspace WorkFlowTest.xcworkspace \
+          -scheme WorkFlowTest \
+          -destination 'platform=iOS Simulator,name=iPhone 14 Pro' \
+          -derivedDataPath ${{ github.workspace }}/DerivedData | tee ${{ github.workspace }}/test_logs/test_logs.txt
+
+    # Archive the app only if the build and tests were successful
+    - name: Archive app
+      if: success()
+      run: |
+        mkdir -p ${{ github.workspace }}/archive_logs
         xcodebuild archive \
-          -workspace YourApp.xcworkspace \
-          -scheme YourAppScheme \
+          -workspace WorkFlowTest.xcworkspace \
+          -scheme WorkFlowTest \
           -sdk iphoneos \
           -configuration Release \
-          -archivePath ${{ github.workspace }}/YourApp.xcarchive
+          -archivePath ${{ github.workspace }}/WorkFlowTest.xcarchive \
+          -derivedDataPath ${{ github.workspace }}/DerivedData | tee ${{ github.workspace }}/archive_logs/archive_logs.txt
 
-    # Optionally upload artifacts (build logs, test reports)
-    - name: Upload Xcode logs
+    # Upload the DerivedData folder as an artifact
+    - name: Upload DerivedData folder
       uses: actions/upload-artifact@v3
       with:
-        name: xcode-logs
-        path: ~/Library/Developer/Xcode/DerivedData
+        name: derived-data
+        path: ${{ github.workspace }}/DerivedData
 
+    # Upload logs as artifacts only if previous steps succeeded
+    - name: Upload build logs
+      if: success()
+      uses: actions/upload-artifact@v3
+      with:
+        name: build-logs
+        path: ${{ github.workspace }}/build_logs/build_logs.txt
+
+    - name: Upload test logs
+      if: success()
+      uses: actions/upload-artifact@v3
+      with:
+        name: test-logs
+        path: ${{ github.workspace }}/test_logs/test_logs.txt
+
+    - name: Upload archive logs
+      if: success()
+      uses: actions/upload-artifact@v3
+      with:
+        name: archive-logs
+        path: ${{ github.workspace }}/archive_logs/archive_logs.txt
